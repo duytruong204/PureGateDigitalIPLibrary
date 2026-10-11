@@ -6,3 +6,6 @@ module mux #(
 		input  wire i_sel[SEL_WIDTH],
 		output wire o_out[DATA_WIDTH]
 )
+		
+
+endmodule
