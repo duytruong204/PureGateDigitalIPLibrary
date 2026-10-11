@@ -4,5 +4,5 @@ module mux #(
 )(
 		input  wire i_data[DATA_WIDTH],
 		input  wire i_sel[SEL_WIDTH],
-		output wire out_data
+		output wire o_out[DATA_WIDTH]
 )
