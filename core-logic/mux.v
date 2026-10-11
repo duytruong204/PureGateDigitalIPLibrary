@@ -1,5 +1,8 @@
 module mux #(
-		localparam DATA_WIDTH
+		parameter DATA_WIDTH = 4,
+		parameter SEL_WIDTH = 3,
 )(
-		input wire in_data[
+		input  wire i_data[DATA_WIDTH],
+		input  wire i_sel[SEL_WIDTH],
+		output wire out_data
 )
