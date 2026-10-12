@@ -5,5 +5,11 @@ module mux_1bit #(
 		input  wire i_sel[SEL_WIDTH],
 		output wire o_out
 )
-
+		wire w_mux_in[SEL_WIDTH]
+		int i, j;
+		generate
+				for(i = 0, i < SEL_WIDTH, i = i + 1) begin: gen_stage
+						for(j = 0, j < 
+				end
+		endgenerate
 endmodule
