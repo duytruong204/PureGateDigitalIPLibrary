@@ -1,3 +1,4 @@
 module mux #(
-  parameter SEL_WIDTH = 4
+    parameter SEL_WIDTH = 4
+    
 )
