@@ -1,5 +1,5 @@
 module mux_1bit #(
-    parameter SEL_WIDTH = 32
+    parameter SEL_WIDTH = 5
 ) (
     input  wire [2**SEL_WIDTH-1:0] i_data, 
     input  wire [SEL_WIDTH-1:0]    i_sel,   
@@ -7,23 +7,27 @@ module mux_1bit #(
 );
 	 genvar stage;
 	 genvar index;
-    // Generate w_tree
-    wire [(2**SEL_WIDTH)-1:0] w_tree [0:SEL_WIDTH];
-    assign w_tree[0] = i_data;
+    // Generate w_stage_data
+    generate
+        for (stage = 0; stage <= SEL_WIDTH; stage = stage + 1) begin: gen_w_stage
+            wire [(2**(SEL_WIDTH - stage))-1:0] w_stage_data;
+        end
+    endgenerate
+
     
     generate
         for (stage = 0; stage < SEL_WIDTH; stage = stage + 1) begin: gen_stage
-            // The number of mux =  (number input of mux) / 2
             for (index = 0; index < (2**(SEL_WIDTH - stage - 1)); index = index + 1) begin: gen_mux
                 mux2to1_1bit mux_inst (
-                    .i_data ({ w_tree[stage][2*index + 1], w_tree[stage][2*index] }), 
+                    .i_data ({ gen_w_stage[stage].w_stage_data[2*index + 1], 
+                               gen_w_stage[stage].w_stage_data[2*index] }), 
                     .i_sel  (i_sel[stage]),
-                    .o_out  (w_tree[stage + 1][index])
+                    .o_out  (gen_w_stage[stage + 1].w_stage_data[index])
                 );
             end
         end
     endgenerate
 
-    assign o_out = w_tree[SEL_WIDTH][0];
+    assign o_out = gen_w_stage[SEL_WIDTH].w_stage_data[0];
 
 endmodule
