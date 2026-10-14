@@ -7,6 +7,7 @@ module mux_1bit #(
 );
     // Generate w_tree
     wire [(2**SEL_WIDTH)-1:0] w_tree [0:SEL_WIDTH];
+    assign w_tree[0] = i_data;
     
     generate
         for (genvar stage = 0; stage < SEL_WIDTH; stage = stage + 1) begin: gen_stage
