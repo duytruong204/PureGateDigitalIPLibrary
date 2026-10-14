@@ -13,7 +13,8 @@ module mux_1bit #(
             wire [(2**(SEL_WIDTH - stage))-1:0] w_stage_data;
         end
     endgenerate
-
+	
+	assign gen_w_stage[0].w_stage_data = i_data;
     
     generate
         for (stage = 0; stage < SEL_WIDTH; stage = stage + 1) begin: gen_stage
