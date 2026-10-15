@@ -1,27 +1,27 @@
 module mux #(
     parameter DATA_WIDTH = 32,
-    parameter SEL_WIDTH  = 5
+    parameter SEL_BIT = 5
 ) (
-    input  wire [(2**SEL_WIDTH)*DATA_WIDTH-1:0]  i_data,
-    input  wire [SEL_WIDTH-1:0]                  i_sel,
+    input  wire [(2**SEL_BIT)*DATA_WIDTH-1:0]  i_data,
+    input  wire [SEL_BIT-1:0]                  i_sel,
     output wire [DATA_WIDTH-1:0]                 o_out
 );
     genvar bit_idx;
     genvar ch_idx;
     
-    wire [DATA_WIDTH-1:0] w_bus_data [0:2**SEL_WIDTH-1];
+    wire [DATA_WIDTH-1:0] w_bus_data [0:2**SEL_BIT-1];
 
     generate
         for (bit_idx = 0; bit_idx < DATA_WIDTH; bit_idx = bit_idx + 1) begin: gen_mux_array
             
-            wire [2**SEL_WIDTH-1:0] w_mux1bit_input;
+            wire [2**SEL_BIT-1:0] w_mux1bit_input;
             
-            for (ch_idx = 0; ch_idx < 2**SEL_WIDTH; ch_idx = ch_idx + 1) begin: gen_collect_bits
+            for (ch_idx = 0; ch_idx < 2**SEL_BIT; ch_idx = ch_idx + 1) begin: gen_collect_bits
                 assign w_mux1bit_input[ch_idx] = i_data[ch_idx * DATA_WIDTH + bit_idx];
             end
             
             mux_1bit #(
-                .SEL_WIDTH(SEL_WIDTH)
+                .SEL_BIT(SEL_BIT)
             ) mux_inst (
                 .i_data (w_mux1bit_input),
                 .i_sel  (i_sel),
@@ -34,26 +34,26 @@ module mux #(
 endmodule
 
 module mux_1bit #(
-    parameter SEL_WIDTH = 5
+    parameter SEL_BIT = 5
 ) (
-    input  wire [2**SEL_WIDTH-1:0] i_data, 
-    input  wire [SEL_WIDTH-1:0]    i_sel,   
+    input  wire [2**SEL_BIT-1:0] i_data, 
+    input  wire [SEL_BIT-1:0]    i_sel,   
     output wire                    o_out    
 );
 	 genvar stage;
 	 genvar index;
     // Generate w_stage_data
     generate
-        for (stage = 0; stage <= SEL_WIDTH; stage = stage + 1) begin: gen_w_stage
-            wire [(2**(SEL_WIDTH - stage))-1:0] w_stage_data;
+        for (stage = 0; stage <= SEL_BIT; stage = stage + 1) begin: gen_w_stage
+            wire [(2**(SEL_BIT - stage))-1:0] w_stage_data;
         end
     endgenerate
 	
 	assign gen_w_stage[0].w_stage_data = i_data;
     
     generate
-        for (stage = 0; stage < SEL_WIDTH; stage = stage + 1) begin: gen_stage
-            for (index = 0; index < (2**(SEL_WIDTH - stage - 1)); index = index + 1) begin: gen_mux
+        for (stage = 0; stage < SEL_BIT; stage = stage + 1) begin: gen_stage
+            for (index = 0; index < (2**(SEL_BIT - stage - 1)); index = index + 1) begin: gen_mux
                 mux2to1_1bit mux_inst (
                     .i_data ({ gen_w_stage[stage].w_stage_data[2*index + 1], 
                                gen_w_stage[stage].w_stage_data[2*index] }), 
@@ -64,7 +64,7 @@ module mux_1bit #(
         end
     endgenerate
 
-    assign o_out = gen_w_stage[SEL_WIDTH].w_stage_data[0];
+    assign o_out = gen_w_stage[SEL_BIT].w_stage_data[0];
 
 endmodule
 
